@@ -73,17 +73,29 @@ def pulse_cb(path, args):
 def note_cb(path, args):
     velocity, on = args
     part = path.split("/")
-    if(part[1] == "midi" and part[2] == "note"):
-        channel = int(part[4]) - 36
-        power = int(velocity * 100)
-        if(on):
+    if(part[1] == "midi"):
+        if(part[2] == "note"):
+            channel = int(part[4]) - 36
+            power = int(velocity * 100)
+            if(on):
+                duty = 1 + ((100 - power) * 4094) / 100
+                pwm.setPWM(channel, duty)
+                print "pwm on %d channel with  %d %%" % (channel, power)
+            else:
+                pwm.setPWM(channel, 0)
+                print "stop on %d channel" % (channel)
+               
+def control_cb(path, args): 
+    part = path.split("/")
+    if(part[1] == "midi"):
+        if("cc" in part[2]):
+            channel = int(part[2][2:]) - 16
+            power = int(args[0] * 100)
             duty = 1 + ((100 - power) * 4094) / 100
             pwm.setPWM(channel, duty)
             print "pwm on %d channel with  %d %%" % (channel, power)
-        else:
-            pwm.setPWM(channel, 0)
-            print "stop on %d channel" % (channel)
-        
+            
+            
 
 for c in range(0, 16):
     pwm.setPWM(c, 1)
@@ -99,6 +111,7 @@ for c in range(0, 16):
 server.add_method("/pwm", 'ii', pwm_cb)
 server.add_method("/pulse", 'ii', pulse_cb)
 server.add_method(None, 'fi', note_cb)
+server.add_method(None, 'f', control_cb)
 
 
 print "\n ***** Starting OSC server *****"
