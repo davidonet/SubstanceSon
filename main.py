@@ -1,3 +1,6 @@
+#!/usr/bin/python2.7
+
+
 from Adafruit_I2C import Adafruit_I2C
 # import numpy as np
 import math
@@ -67,9 +70,8 @@ def pulse_cb(path, args):
     pwm.setPWM(channel,4095)
     print "%d ms pulse on %d" % (duration,channel)
 
-server.add_method("/pwm/", 'ii', pwm_cb)
-server.add_method("/pulse/", 'ii', pulse_cb)
-
+server.add_method("/pwm", 'ii', pwm_cb)
+server.add_method("/pulse", 'ii', pulse_cb)
 
 while True:
     server.recv(100)
