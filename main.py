@@ -77,7 +77,8 @@ def note_cb(path, args):
         channel = int(part[4]) - 36
         power = int(velocity * 100)
         if(on):
-            pwm.setPWM(channel, power)
+            duty = 1 + ((100 - power) * 4094) / 100
+            pwm.setPWM(channel, duty)
             print "pwm on %d channel with  %d %%" % (channel, power)
         else:
             pwm.setPWM(channel, 0)
