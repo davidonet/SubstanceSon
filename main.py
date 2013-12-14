@@ -86,8 +86,8 @@ def note_cb(path, args):
         
 
 for c in range(0, 16):
-    pwm.setPWM(c, 256)
-    time.sleep(.5)
+    pwm.setPWM(c, 1)
+    time.sleep(.1)
     pwm.setPWM(c, 4095)
     print "Testing %d channel" % (c)
     
