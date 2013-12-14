@@ -51,27 +51,55 @@ class PWM :
     
 pwm = PWM(0x41, debug=True)
 pwm.setPWMFreq(3)
-
-for c in range(0,16):
+print "Reseting PWMs"
+for c in range(0, 16):
     pwm.setPWM(c, 4095)
- 
+
 server = liblo.Server(1234)
 
 def pwm_cb(path, args):
-    channel,value = args
-    duty = 1+((100-value)*4094)/100
-    pwm.setPWM(channel,duty)
-    print "pwm on %d set to %d %% -> %d" % (channel,value,duty)
+    channel, value = args
+    duty = 1 + ((100 - value) * 4094) / 100
+    pwm.setPWM(channel, duty)
+    print "pwm on %d set to %d %% -> %d" % (channel, value, duty)
 
 def pulse_cb(path, args):
-    channel,duration = args
-    pwm.setPWM(channel,256)
-    time.sleep(duration/1000)
-    pwm.setPWM(channel,4095)
-    print "%d ms pulse on %d" % (duration,channel)
+    channel, duration = args
+    pwm.setPWM(channel, 256)
+    time.sleep(duration / 1000)
+    pwm.setPWM(channel, 4095)
+    print "%d ms pulse on %d" % (duration, channel)
+
+def note_cb(path, args):
+    velocity, on = args
+    part = path.split("/")
+    if(part[1] == "midi" and part[2] == "note"):
+        channel = int(part[4]) - 24
+        power = int(velocity * 100)
+        if(on):
+            pwm.setPWM(channel, power)
+            print "pwm on %d channel with  %d %%" % (channel, power)
+        else:
+            pwm.setPWM(channel, 0)
+            print "stop on %d channel" % (channel)
+        
+
+for c in range(0, 16):
+    pwm.setPWM(c, 256)
+    time.sleep(.1)
+    pwm.setPWM(c, 4095)
+    print "Testing %d channel" % (c)
+    
+print "Reseting PWMs"
+for c in range(0, 16):
+    pwm.setPWM(c, 4095)
+        
 
 server.add_method("/pwm", 'ii', pwm_cb)
 server.add_method("/pulse", 'ii', pulse_cb)
+server.add_method(None, 'fi', note_cb)
 
+
+print "\n ***** Starting OSC server *****"
 while True:
     server.recv(100)
