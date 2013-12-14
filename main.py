@@ -74,7 +74,7 @@ def note_cb(path, args):
     velocity, on = args
     part = path.split("/")
     if(part[1] == "midi" and part[2] == "note"):
-        channel = int(part[4]) - 24
+        channel = int(part[4]) - 48
         power = int(velocity * 100)
         if(on):
             pwm.setPWM(channel, power)
