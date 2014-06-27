@@ -1,3 +1,11 @@
+# Hardware
+
+* Raspberry Pi [http://www.raspberrypi.org/]
+* I2C 16 Channel PWM Servo & SPI 23017 x1 - 16 GPIO Board [http://www.pridopia.co.uk/pi-9685-23017-lp.html]
+* Occidentalis v0.2 [https://learn.adafruit.com/adafruit-raspberry-pi-educational-linux-distro/occidentalis-v0-dot-2]
+* 16 mosfet board to drive vibrator
+* Power supply
+
 # OSC messages
 
 ## continuous duty cycle control message
